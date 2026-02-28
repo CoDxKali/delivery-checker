@@ -51,7 +51,7 @@ def check_delivery():
     distance = haversine(WAREHOUSE_LAT, WAREHOUSE_LON, lat, lon)
 
     # ⭐ Gurgaon override
-    is_available = distance <= RADIUS_KM or city.lower() in ["gurugram", "gurgaon"]
+    is_available = distance <= RADIUS_KM 
 
     return jsonify({
         "distance": round(distance, 2),
