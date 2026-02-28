@@ -21,11 +21,6 @@ def haversine(lat1, lon1, lat2, lon2):
     return 2 * R * math.atan2(math.sqrt(a), math.sqrt(1-a))
 
 
-@app.route("/")
-def home():
-    return render_template("index.html")
-
-
 @app.route("/check-delivery", methods=["POST"])
 def check_delivery():
     pincode = request.json.get("pincode")
@@ -33,7 +28,6 @@ def check_delivery():
     if pincode in pincode_cache:
         lat, lon, city, state = pincode_cache[pincode]
     else:
-        # ⭐ Bias geocoder to Gurgaon area
         location = geolocator.geocode(
             f"{pincode}, Gurgaon, Haryana, India",
             addressdetails=True,
@@ -51,18 +45,18 @@ def check_delivery():
 
         pincode_cache[pincode] = (lat, lon, city, state)
 
+    # ⭐ Distance calculation
     distance = haversine(WAREHOUSE_LAT, WAREHOUSE_LON, lat, lon)
 
-# ⭐ Gurgaon override (important)
-is_available = distance <= RADIUS_KM or city.lower() in ["gurugram", "gurgaon"]
+    # ⭐ Gurgaon override
+    is_available = distance <= RADIUS_KM or city.lower() in ["gurugram", "gurgaon"]
 
-return jsonify({
-    "distance": round(distance, 2),
-    "available": is_available,
-    "city": city,
-    "state": state
-})
-
+    return jsonify({
+        "distance": round(distance, 2),
+        "available": is_available,
+        "city": city,
+        "state": state
+    })
 
 if __name__ == "__main__":
     app.run(debug=True, port=8000)
