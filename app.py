@@ -1,10 +1,12 @@
 from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
 from geopy.geocoders import Nominatim
 import math
 
 app = Flask(__name__)
-geolocator = Nominatim(user_agent="delivery_checker")
+CORS(app)   # 👈 THIS LINE IS REQUIRED
 
+geolocator = Nominatim(user_agent="delivery_checker")
 WAREHOUSE_LAT = 28.4429
 WAREHOUSE_LON = 77.0525
 RADIUS_KM = 50
