@@ -31,10 +31,9 @@ def check_delivery():
         lat, lon, city, state = pincode_cache[pincode]
     else:
         location = geolocator.geocode(
-    f"{pincode}, India",
-    addressdetails=True,
-    timeout=10
-)
+            f"{pincode}, India",
+            addressdetails=True,
+            timeout=10
         )
 
         if not location:
@@ -43,16 +42,19 @@ def check_delivery():
         lat, lon = location.latitude, location.longitude
 
         address = location.raw.get("address", {})
-        city = address.get("city") or address.get("town") or address.get("village") or "Unknown"
+        city = (
+            address.get("city")
+            or address.get("town")
+            or address.get("village")
+            or "Unknown"
+        )
         state = address.get("state", "Unknown")
 
         pincode_cache[pincode] = (lat, lon, city, state)
 
-    # ⭐ Distance calculation
     distance = haversine(WAREHOUSE_LAT, WAREHOUSE_LON, lat, lon)
 
-    # ⭐ Gurgaon override
-    is_available = distance <= RADIUS_KM 
+    is_available = distance <= RADIUS_KM
 
     return jsonify({
         "distance": round(distance, 2),
@@ -60,6 +62,5 @@ def check_delivery():
         "city": city,
         "state": state
     })
-
 if __name__ == "__main__":
     app.run(debug=True, port=8000)
