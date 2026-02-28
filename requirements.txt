@@ -1,0 +1,4 @@
+flask
+geopy
+gunicorn
+flask-cors
