@@ -31,9 +31,10 @@ def check_delivery():
         lat, lon, city, state = pincode_cache[pincode]
     else:
         location = geolocator.geocode(
-            f"{pincode}, Gurgaon, Haryana, India",
-            addressdetails=True,
-            timeout=10
+    f"{pincode}, India",
+    addressdetails=True,
+    timeout=10
+)
         )
 
         if not location:
